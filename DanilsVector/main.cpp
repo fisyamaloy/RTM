@@ -5,26 +5,23 @@
 
 int main()
 {
+    std::vector<int> a(5);
+    a.push_back(4);
     try
     {
-        Danils::Vector<int> vec{1, 2, 3, 4, 32};
-        vec.reserve(5);
+        Danils::Vector<int> vec(5);
+        vec.push_back(4);
+        vec.reserve(7);
         std::cout << vec.size() << ' ' << vec.capacity() << std::endl;
 
-        for (auto i = 0; i < vec.size(); ++i)
+        for (size_t i = 0; i < vec.size(); ++i)
         {
             std::cout << vec[i] << std::endl;
         }
 
-        vec.push_front(3202);
-        vec.push_front(-10);
+        vec.erase(2);
 
-        vec.push_back(0);
-        vec.push_back(-300);
-        vec.push_back(-300);
-        vec.push_back(-300);
-
-        for (int i = 0; i < static_cast<int>(vec.size()); ++i)
+        for (size_t i = 0; i < vec.size(); ++i)
         {
             std::cout << vec[i] << std::endl;
         }
@@ -33,5 +30,10 @@ int main()
     {
         std::cout << e.what() << std::endl;
     }
+    catch (const std::exception& e)
+    {
+        std::cout << "asd" << e.what() << std::endl;
+    }
+
     return 0;
 }
