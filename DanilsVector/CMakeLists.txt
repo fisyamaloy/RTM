@@ -1,7 +1,9 @@
 set(TARGET DanilsVector)
 
 set(SOURCE_FILES
-   main.cpp)
+   main.cpp
+   Vector.hpp
+   VectorException.hpp)
 
 add_executable(${TARGET} ${SOURCE_FILES})
 
