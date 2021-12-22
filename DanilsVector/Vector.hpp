@@ -25,8 +25,8 @@ public:
     inline T& at(const size_t index) const;
     inline T& operator[](const int index) const noexcept { return A[index]; }
 
-    inline const size_t size() const noexcept { return mSize; }
-    inline const size_t capacity() const noexcept { return mCapacity; }
+    inline constexpr size_t size() const noexcept { return mSize; }
+    inline constexpr size_t capacity() const noexcept { return mCapacity; }
 
     void push_back(const T& element);
     void push_front(const T& elem);
@@ -39,7 +39,7 @@ void Vector<T>::alloc_new()
 {
     mCapacity *= 2;
     T* newArray = new T[mCapacity];
-    for (auto i = 0; i < mSize; ++i)
+    for (size_t i = 0; i < mSize; ++i)
     {
         newArray[i] = A[i];
     }
@@ -63,12 +63,10 @@ Vector<T>::Vector(const Vector<T>& vector) noexcept
     mCapacity = vector.capacity();
     A         = new T[mCapacity];
 
-    for (auto i = 0; i < vector.mSize; ++i)
+    for (size_t i = 0; i < vector.mSize; ++i)
     {
         A[i] = vector.A[i];
     }
-
-    return *this;
 }
 
 template <class T>
@@ -117,7 +115,7 @@ void Vector<T>::push_front(const T& elem)
 
     T* newArray = new T[++mSize];
     newArray[0] = elem;
-    for (auto i = 1; i < mSize; ++i)
+    for (size_t i = 1; i < mSize; ++i)
     {
         newArray[i] = A[i - 1];
     }

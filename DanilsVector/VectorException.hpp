@@ -14,7 +14,7 @@ public:
 
     VectorException(const ErrorsCodes dataState) { this->mDataState = dataState; }
 
-    const char* what() const override
+    const char* what() const noexcept override
     {
         switch (mDataState)
         {
