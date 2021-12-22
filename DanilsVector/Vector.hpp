@@ -178,7 +178,7 @@ void Vector<T>::insert(const int index, const T& elem)
 template <class T>
 void Vector<T>::erase(const int index)
 {
-    if (index < 0 || index >= mSize)
+    if (index < 0 || index >= static_cast<int>(mSize))
     {
         throw VectorException(VectorException::ErrorsCodes::OUT_OF_RANGE);
     }
