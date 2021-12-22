@@ -28,8 +28,21 @@ public:
     inline constexpr size_t size() const noexcept { return mSize; }
     inline constexpr size_t capacity() const noexcept { return mCapacity; }
 
+    void reserve(const size_t newCapacity) noexcept
+    {
+        if (newCapacity <= mCapacity)
+        {
+            return;
+        }
+
+        mCapacity = newCapacity;
+        alloc_new();
+    }
+
     void push_back(const T& element);
     void push_front(const T& elem);
+
+    void insert(const int index, const T& elem);
 };
 
 // Definiton
@@ -37,7 +50,6 @@ public:
 template <class T>
 void Vector<T>::alloc_new()
 {
-    mCapacity *= 2;
     T* newArray = new T[mCapacity];
     for (size_t i = 0; i < mSize; ++i)
     {
@@ -76,7 +88,7 @@ Vector<T>::Vector(const std::initializer_list<T>& list) noexcept
     mCapacity = list.size() * 2;
     A         = new T[mCapacity];
 
-    size_t i  = 0;
+    size_t i = 0;
     for (const auto& elem : list)
     {
         A[i++] = elem;
@@ -95,32 +107,31 @@ T& Vector<T>::at(const size_t index) const
 }
 
 template <class T>
-void Vector<T>::push_back(const T& element)
+void Vector<T>::insert(const int index, const T& elem)
 {
-    if (mSize + 1 > mCapacity)
+    if (mSize >= mCapacity)
     {
+        mCapacity = mSize * 2;
         alloc_new();
     }
 
-    A[mSize++] = element;
+    for (int i = static_cast<int>(mSize) - 1; i >= index; --i)
+    {
+        A[i + 1] = A[i];
+    }
+    A[index] = elem;
+    mSize++;
+}
+
+template <class T>
+void Vector<T>::push_back(const T& element)
+{
+    insert(static_cast<int>(mSize), element);
 }
 
 template <class T>
 void Vector<T>::push_front(const T& elem)
 {
-    if (mSize + 1 > mCapacity)
-    {
-        alloc_new();
-    }
-
-    T* newArray = new T[++mSize];
-    newArray[0] = elem;
-    for (size_t i = 1; i < mSize; ++i)
-    {
-        newArray[i] = A[i - 1];
-    }
-
-    delete[] A;
-    A = newArray;
+    insert(0, elem);
 }
 }  // namespace Danils
