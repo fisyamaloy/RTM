@@ -17,11 +17,11 @@ private:
 
 public:
     Vector() noexcept;
-    Vector(const Vector<T>& vector) noexcept;
-    ~Vector() noexcept { delete[] A; }
-
     Vector(const size_t length);
     Vector(const std::initializer_list<T>& list) noexcept;
+    Vector(const Vector<T>& vector) noexcept;
+
+    ~Vector() noexcept { delete[] A; }
 
     inline T& at(const int index) const;
     inline T& at(const size_t index) const;
@@ -36,10 +36,10 @@ public:
     void insert(const int index, const T& elem);
     void erase(const int index);
 
-    void push_back(const T& elem);
-    void push_front(const T& elem);
-    void pop_back(const T& elem);
-    void pop_front(const T& elem);
+    void push_back(const T& elem) { insert(static_cast<int>(mSize), elem); }
+    void push_front(const T& elem) { insert(0, elem); }
+    void pop_back(const T& elem) { erase(mSize - 1); }
+    void pop_front(const T& elem) { erase(0); }
 };
 
 // Definiton
@@ -132,30 +132,6 @@ void Vector<T>::reserve(const size_t newCapacity) noexcept
 
     mCapacity = newCapacity;
     alloc_new();
-}
-
-template <class T>
-void Vector<T>::push_back(const T& element)
-{
-    insert(static_cast<int>(mSize), element);
-}
-
-template <class T>
-void Vector<T>::push_front(const T& elem)
-{
-    insert(0, elem);
-}
-
-template <class T>
-void Vector<T>::pop_back(const T& elem)
-{
-    erase(mSize - 1);
-}
-
-template <class T>
-void Vector<T>::pop_front(const T& elem)
-{
-    erase(0);
 }
 
 template <class T>
