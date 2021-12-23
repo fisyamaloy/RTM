@@ -17,7 +17,7 @@ private:
 
 public:
     Vector() noexcept;
-    Vector(const size_t length);
+    Vector(const size_t length) noexcept;
     Vector(const std::initializer_list<T>& list) noexcept;
     Vector(const Vector<T>& vector) noexcept;
 
@@ -38,8 +38,8 @@ public:
 
     void push_back(const T& elem) { insert(static_cast<int>(mSize), elem); }
     void push_front(const T& elem) { insert(0, elem); }
-    void pop_back(const T& elem) { erase(mSize - 1); }
-    void pop_front(const T& elem) { erase(0); }
+    void pop_back() { erase(static_cast<int>(mSize) - 1); }
+    void pop_front() { erase(0); }
 };
 
 // Definiton
@@ -79,7 +79,7 @@ Vector<T>::Vector(const Vector<T>& vector) noexcept
 }
 
 template <class T>
-Vector<T>::Vector(const size_t length)
+Vector<T>::Vector(const size_t length) noexcept
 {
     A         = new T[length];
     mSize     = length;
@@ -103,7 +103,7 @@ Vector<T>::Vector(const std::initializer_list<T>& list) noexcept
 template <class T>
 T& Vector<T>::at(const int index) const
 {
-    if (index < static_cast<int>(mSize))
+    if (index >= 0 && index < static_cast<int>(mSize))
     {
         return A[index];
     }
@@ -114,7 +114,7 @@ T& Vector<T>::at(const int index) const
 template <class T>
 T& Vector<T>::at(const size_t index) const
 {
-    if (index < mSize)
+    if (index >= 0 && index < mSize)
     {
         return A[index];
     }
@@ -137,6 +137,11 @@ void Vector<T>::reserve(const size_t newCapacity) noexcept
 template <class T>
 void Vector<T>::insert(const int index, const T& elem)
 {
+    if (index < 0)
+    {
+        throw Danils::VectorException(VectorException::ErrorsCodes::OUT_OF_RANGE);
+    }
+
     if (mSize >= mCapacity)
     {
         mCapacity = mSize * 2;
@@ -148,6 +153,7 @@ void Vector<T>::insert(const int index, const T& elem)
         A[i + 1] = A[i];
     }
     A[index] = elem;
+
     mSize++;
 }
 
