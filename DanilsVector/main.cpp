@@ -31,6 +31,13 @@ struct Student
                Student::areAverageStudentsGradesEqual(first, second);
     }
 
+    Student& operator=(const Student& other)
+    {
+        this->name         = other.name;
+        this->course       = other.course;
+        this->avarageGrade = other.avarageGrade;
+    }
+
 private:
     inline static bool areAverageStudentsGradesEqual(const Student& first, const Student& second)
     {
@@ -133,7 +140,6 @@ TEST(FunctionTest, atThrownException)
     EXPECT_THROW(vec.at(-1), Danils::VectorException);
     EXPECT_THROW(vec.at(-1), std::exception);
 }
-
 
 TEST(FunctionTest, atNotThrownException)
 {
