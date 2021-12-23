@@ -103,7 +103,7 @@ Vector<T>::Vector(const std::initializer_list<T>& list) noexcept
 template <class T>
 T& Vector<T>::at(const int index) const
 {
-    if (index < mSize)
+    if (index < static_cast<int>(mSize))
     {
         return A[index];
     }
