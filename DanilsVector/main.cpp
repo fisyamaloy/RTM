@@ -36,6 +36,8 @@ struct Student
         this->name         = other.name;
         this->course       = other.course;
         this->avarageGrade = other.avarageGrade;
+
+        return *this;
     }
 
 private:
