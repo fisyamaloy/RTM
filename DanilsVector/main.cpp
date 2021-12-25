@@ -27,7 +27,8 @@ struct Student
 
     friend bool operator==(const Student& first, const Student& second)
     {
-        return first.name == second.name && first.course == second.course &&
+        return first.name   == second.name && 
+               first.course == second.course &&
                Student::areAverageStudentsGradesEqual(first, second);
     }
 

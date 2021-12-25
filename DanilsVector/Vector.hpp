@@ -1,4 +1,5 @@
 #pragma once
+#include <MemAllocChecker/MemAllocChecker.hpp>
 #include <cstdlib>
 
 #include "VectorException.hpp"
@@ -6,7 +7,7 @@
 namespace Danils
 {
 template <class T>
-class Vector
+class Vector : MemoryAllocationChecker
 {
 private:
     T*     A;
@@ -20,6 +21,7 @@ public:
     Vector(const size_t length) noexcept;
     Vector(const std::initializer_list<T>& list) noexcept;
     Vector(const Vector<T>& vector) noexcept;
+    Vector(Vector<T>&& vector) noexcept;
 
     ~Vector() noexcept { delete[] A; }
 
@@ -76,6 +78,15 @@ Vector<T>::Vector(const Vector<T>& vector) noexcept
     {
         A[i] = vector.A[i];
     }
+}
+
+template <class T>
+Vector<T>::Vector(Vector<T>&& vector) noexcept
+{
+    std::cout << "&&" << std::endl;
+    this->A         = std::move(vector.A);
+    this->mCapacity = std::move(vector.mCapacity);
+    this->mSize     = std::move(vector.mSize);
 }
 
 template <class T>
