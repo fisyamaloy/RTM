@@ -1,37 +1,47 @@
 #pragma once
+
 #include <cstdlib>
 
-namespace Danils
+class MemoryAllocationChecker
 {
-//DANGER! Never use this var from namespace
-namespace
-{
-size_t usedMemory = 0;
-}
+private:
+    static size_t newCallAmount;
+    static size_t delCallAmount;
 
-struct MemoryAllocationChecker
-{
 public:
-    static void* operator new(size_t size)
+    void* operator new(size_t size)
     {
-        usedMemory += size;
-        return malloc(size);
+        void* p = malloc(size);
+        /* It is not fully correct throwing an exception: if (p == nullptr) standart promise that
+         'standart operator new' would call *new_handler* which would try (x times) allocating
+         memory again */
+        if (p == nullptr) throw std::bad_alloc();
+
+        std::cout << "New call number " << ++newCallAmount << std::endl;
+        return p;
     }
 
-    static void operator delete(void* p, size_t size)
+    void* operator new[](std::size_t size)
+    {
+        void* p = malloc(size);
+        /* It is not fully correct throwing an exception: if (p == nullptr) standart promise that
+         'standart operator new' would call *new_handler* which would try (x times) allocating
+         memory again */
+        if (p == nullptr) throw std::bad_alloc();
+
+        std::cout << "New call number " << ++newCallAmount << std::endl;
+        return p;
+    }
+
+    void operator delete(void* p)
     {
         free(p);
-        usedMemory -= size;
+        std::cout << "Delete call number " << ++delCallAmount << std::endl;
     }
-    void* operator new[](std::size_t size) 
-    {
-        usedMemory += size;
-        return malloc(size);
-    }
-    void operator delete[](void* p, std::size_t size) 
+
+    void operator delete[](void* p, std::size_t)
     {
         free(p);
-        usedMemory -= size;
+        std::cout << "Delete call number " << ++delCallAmount << std::endl;
     }
 };
-}  // namespace Danils

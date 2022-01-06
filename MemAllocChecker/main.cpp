@@ -1,25 +1,18 @@
 #include <iostream>
 #include "MemAllocChecker.hpp"
 
-struct Taxi : Danils::MemoryAllocationChecker
+struct S
 {
-    char* name;
-    int* number;
+    char a;
+    int b;
+    double d1;
+    char c;
+    double d2;
 };
 
 int main() 
 {
-    std::cout << Danils::usedMemory << std::endl;
-    Taxi* taxi_1 = new Taxi[5];
-    for (int i = 0; i < 5; ++i)
-    {
-        taxi_1->number = new int(3);
-    }
-
-    std::cout << Danils::usedMemory << std::endl;
-    delete[] taxi_1;
+    std::cout << sizeof(S) << std::endl;
     
-    std::cout << Danils::usedMemory << std::endl;
-
 	return 0;
 }

@@ -1,11 +1,13 @@
 #include <iostream>
 #include <unordered_map>
 
+namespace Danils
+{
 struct CustomKey
 {
 public:
-    int         id;
-    size_t      size;
+    int    id;
+    size_t size;
 
     struct HashFunction
     {
@@ -20,20 +22,19 @@ public:
 
     CustomKey() : id(0), size(0) {}
 
-    CustomKey(const int id, const size_t size)
-        : id(id), size(size)
-    {
-    }
+    CustomKey(const int id, const size_t size) : id(id), size(size) {}
 
     friend bool operator==(const CustomKey& first, const CustomKey& second)
     {
-        return first.id   == second.id && 
-               first.size == second.size;
+        return first.id == second.id && first.size == second.size;
     }
 };
+}  // namespace Danils
 
 int main()
 {
+    using namespace Danils;
+
     CustomKey first(1, 22);
     CustomKey second(2, 33);
     CustomKey likeFirst(1, 22);

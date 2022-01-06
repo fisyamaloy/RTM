@@ -1,13 +1,13 @@
 #pragma once
-#include <MemAllocChecker/MemAllocChecker.hpp>
 #include <cstdlib>
 
+#include "Allocator.hpp"
 #include "VectorException.hpp"
 
 namespace Danils
 {
 template <class T>
-class Vector : MemoryAllocationChecker
+class Vector
 {
 private:
     T*     A;
@@ -83,10 +83,12 @@ Vector<T>::Vector(const Vector<T>& vector) noexcept
 template <class T>
 Vector<T>::Vector(Vector<T>&& vector) noexcept
 {
-    std::cout << "&&" << std::endl;
     this->A         = std::move(vector.A);
     this->mCapacity = std::move(vector.mCapacity);
     this->mSize     = std::move(vector.mSize);
+    vector.A         = nullptr;
+    vector.mCapacity = 0;
+    vector.mSize     = 0;
 }
 
 template <class T>
