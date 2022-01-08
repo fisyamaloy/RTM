@@ -9,7 +9,7 @@ struct Allocator
 {
     T* allocate(const size_t n)
     {
-        return ::operator new(n * sizeof(T));  // Function operator new
+        return static_cast<T*>(::operator new(n * sizeof(T)));  // Function operator new
     }
 
     void deallocate(T* p, size_t)
@@ -17,11 +17,10 @@ struct Allocator
         ::operator delete(p);  // Function operator delete
     }
 
-    // TODO: move semantics for args is needed
     template <class... Args>
-    void construct(T* ptr, const Args&... args)
+    void construct(T* ptr, Args&&... args)
     {
-        new (ptr) T(args...);
+        new (ptr) T(std::forward<Args>(args)...); // Placement new
     }
 
     void destroy(T* ptr) { ptr->~T(); }

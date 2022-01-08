@@ -6,24 +6,34 @@
 
 namespace Danils
 {
-template <class T>
+template <class T, class Alloc = std::allocator<T>>
 class Vector
 {
 private:
-    T*     A;
     size_t mSize;
     size_t mCapacity;
+    T*     A;
+    Alloc mAlloc;
+
+    using AllocTraits = std::allocator_traits<Alloc>;
 
     void alloc_new();
 
 public:
-    Vector() noexcept;
-    Vector(const size_t length) noexcept;
+    Vector() noexcept : mSize(0), mCapacity(0), A(nullptr){};
+    Vector(const size_t length, const T& elem = T()) noexcept;
     Vector(const std::initializer_list<T>& list) noexcept;
     Vector(const Vector<T>& vector) noexcept;
     Vector(Vector<T>&& vector) noexcept;
 
-    ~Vector() noexcept { delete[] A; }
+    ~Vector()
+    { 
+        for (size_t i = 0; i < mSize; ++i)
+        {
+            AllocTraits::destroy(mAlloc, A + i);
+        }
+        AllocTraits::deallocate(mAlloc, A, mCapacity);
+    }
 
     inline T& at(const int index) const;
     inline T& at(const size_t index) const;
@@ -46,75 +56,84 @@ public:
 
 // Definiton
 
-template <class T>
-void Vector<T>::alloc_new()
+template <class T, class Alloc>
+void Vector<T, Alloc>::alloc_new()
 {
-    T* newArray = new T[mCapacity];
-    for (size_t i = 0; i < mSize; ++i)
+    T*     newArray = AllocTraits::allocate(mAlloc, mCapacity);
+    size_t i = 0;
+    try
     {
-        newArray[i] = A[i];
+        for (; i < mSize; ++i)
+            AllocTraits::construct(mAlloc, newArray + i, A[i]);
+    }
+    catch (...)
+    {
+        for (size_t j = 0; j < i; ++j)
+            AllocTraits::destroy(mAlloc, newArray + j);
+        AllocTraits::deallocate(mAlloc, newArray, mCapacity);
+        throw;
     }
 
-    delete[] A;
+    for (i = 0; i < mSize; ++i)
+        AllocTraits::destroy(mAlloc, A + i);
+    AllocTraits::deallocate(mAlloc, A, mCapacity);
+
     A = newArray;
 }
 
-template <class T>
-Vector<T>::Vector() noexcept
+template <class T, class Alloc>
+Vector<T, Alloc>::Vector(const Vector<T>& vector) noexcept
 {
-    mCapacity = 20;
-    A         = new T[mCapacity];
-    mSize     = 0;
-}
-
-template <class T>
-Vector<T>::Vector(const Vector<T>& vector) noexcept
-{
-    mSize     = vector.size();
-    mCapacity = vector.capacity();
-    A         = new T[mCapacity];
+    mSize     = vector.mSize;
+    mCapacity = vector.mCapacity;
+    A = AllocTraits::allocate(mAlloc, mCapacity);
 
     for (size_t i = 0; i < vector.mSize; ++i)
     {
-        A[i] = vector.A[i];
+        AllocTraits::construct(mAlloc, A + i, vector[i]);
     }
 }
 
-template <class T>
-Vector<T>::Vector(Vector<T>&& vector) noexcept
+template <class T, class Alloc>
+Vector<T, Alloc>::Vector(Vector<T>&& vector) noexcept
 {
-    this->A         = std::move(vector.A);
-    this->mCapacity = std::move(vector.mCapacity);
-    this->mSize     = std::move(vector.mSize);
+    A         = vector.A;
+    mCapacity = mCapacity;
+    mSize     = mSize;
     vector.A         = nullptr;
     vector.mCapacity = 0;
     vector.mSize     = 0;
 }
 
-template <class T>
-Vector<T>::Vector(const size_t length) noexcept
+template <class T, class Alloc>
+Vector<T, Alloc>::Vector(const size_t length, const T& elem) noexcept
 {
-    A         = new T[length];
     mSize     = length;
     mCapacity = length * 2;
+    A         = AllocTraits::allocate(mAlloc, mCapacity);
+    for (size_t i = 0; i < mSize; ++i)
+    {
+        AllocTraits::construct(mAlloc, A + i, elem);
+    }
 }
 
-template <class T>
-Vector<T>::Vector(const std::initializer_list<T>& list) noexcept
+template <class T, class Alloc>
+Vector<T, Alloc>::Vector(const std::initializer_list<T>& list) noexcept
 {
     mSize     = list.size();
     mCapacity = list.size() * 2;
-    A         = new T[mCapacity];
+    A         = AllocTraits::allocate(mAlloc, mCapacity);
 
     size_t i = 0;
     for (const auto& elem : list)
     {
-        A[i++] = elem;
+        AllocTraits::construct(mAlloc, A + i, elem);
+        ++i;
     }
 }
 
-template <class T>
-T& Vector<T>::at(const int index) const
+template <class T, class Alloc>
+T& Vector<T, Alloc>::at(const int index) const
 {
     if (index >= 0 && index < static_cast<int>(mSize))
     {
@@ -124,8 +143,8 @@ T& Vector<T>::at(const int index) const
     throw VectorException(VectorException::ErrorsCodes::OUT_OF_RANGE);
 }
 
-template <class T>
-T& Vector<T>::at(const size_t index) const
+template <class T, class Alloc>
+T& Vector<T, Alloc>::at(const size_t index) const
 {
     if (index >= 0 && index < mSize)
     {
@@ -135,8 +154,8 @@ T& Vector<T>::at(const size_t index) const
     throw VectorException(VectorException::ErrorsCodes::OUT_OF_RANGE);
 }
 
-template <class T>
-void Vector<T>::reserve(const size_t newCapacity) noexcept
+template <class T, class Alloc>
+void Vector<T, Alloc>::reserve(const size_t newCapacity) noexcept
 {
     if (newCapacity <= mCapacity)
     {
@@ -147,8 +166,8 @@ void Vector<T>::reserve(const size_t newCapacity) noexcept
     alloc_new();
 }
 
-template <class T>
-void Vector<T>::insert(const int index, const T& elem)
+template <class T, class Alloc>
+void Vector<T, Alloc>::insert(const int index, const T& elem)
 {
     if (index < 0)
     {
@@ -163,15 +182,15 @@ void Vector<T>::insert(const int index, const T& elem)
 
     for (int i = static_cast<int>(mSize) - 1; i >= index; --i)
     {
-        A[i + 1] = A[i];
+        AllocTraits::construct(mAlloc, A + i + 1, A[i]);
     }
-    A[index] = elem;
+    AllocTraits::construct(mAlloc, A + index, elem);
 
     mSize++;
 }
 
-template <class T>
-void Vector<T>::erase(const int index)
+template <class T, class Alloc>
+void Vector<T, Alloc>::erase(const int index)
 {
     if (index < 0 || index >= static_cast<int>(mSize))
     {
@@ -180,9 +199,9 @@ void Vector<T>::erase(const int index)
 
     for (size_t i = index; i < mSize - 1; ++i)
     {
-        A[i] = A[i + 1];
+        AllocTraits::construct(mAlloc, A + i, A[i + 1]);
     }
-    A[mSize - 1] = T();
+    AllocTraits::construct(mAlloc, A + mSize - 1, T());
 
     mSize--;
 }

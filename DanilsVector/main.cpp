@@ -64,14 +64,14 @@ struct TestStudent : testing::Test
 TEST(ConstructorTest, DefaultConstructor)
 {
     Danils::Vector<int> vec;
-    ASSERT_EQ(vec.capacity(), 20);
+    ASSERT_EQ(vec.capacity(), 0);
     ASSERT_EQ(vec.size(), 0);
 }
 
 TEST_F(TestStudent, DefaultConstructor)
 {
     Danils::Vector<Student> vec;
-    ASSERT_EQ(vec.capacity(), 20);
+    ASSERT_EQ(vec.capacity(), 0);
     ASSERT_EQ(vec.size(), 0);
 }
 
@@ -117,8 +117,6 @@ TEST_F(TestStudent, CopyConstructor)
     ASSERT_TRUE(students[2] == B[2]);
     ASSERT_TRUE(students[3] == B[3]);
     ASSERT_TRUE(students[4] == B[4]);
-    ASSERT_TRUE(students[5] == B[5]);
-    ASSERT_TRUE(students[6] == B[6]);
 }
 
 TEST(ConstructorTest, lengthParamConstructor)
