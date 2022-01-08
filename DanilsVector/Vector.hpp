@@ -6,7 +6,7 @@
 
 namespace Danils
 {
-template <class T, class Alloc = std::allocator<T>>
+template <class T, class Alloc = Danils::Allocator<T>>
 class Vector
 {
 private:

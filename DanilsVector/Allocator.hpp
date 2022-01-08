@@ -7,22 +7,30 @@ namespace Danils
 template <class T>
 struct Allocator
 {
-    T* allocate(const size_t n)
+    using pointer            = T*;
+    using const_pointer      = T const*;
+    using void_pointer       = void*;
+    using const_void_pointer = void const*;
+    using size_type          = size_t;
+    using difference_type    = ptrdiff_t;
+    using value_type         = T;
+
+    pointer allocate(const size_type n)
     {
-        return static_cast<T*>(::operator new(n * sizeof(T)));  // Function operator new
+        return static_cast<pointer>(::operator new(n * sizeof(T)));  // Function operator new
     }
 
-    void deallocate(T* p, size_t)
+    void deallocate(pointer p, size_type)
     {
         ::operator delete(p);  // Function operator delete
     }
 
     template <class... Args>
-    void construct(T* ptr, Args&&... args)
+    void construct(pointer ptr, Args&&... args)
     {
-        new (ptr) T(std::forward<Args>(args)...); // Placement new
+        new (ptr) T(std::forward<Args>(args)...);  // Placement new
     }
 
-    void destroy(T* ptr) { ptr->~T(); }
+    void destroy(pointer ptr) { ptr->~T(); }
 };
 }  // namespace Danils
