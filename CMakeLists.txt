@@ -38,5 +38,4 @@ conan_cmake_run(CONANFILE conanfile.txt
 enable_testing()
 
 add_subdirectory(DanilsVector)
-add_subdirectory(MemAllocChecker)
 add_subdirectory(CustomKeyForHash)

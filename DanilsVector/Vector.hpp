@@ -11,10 +11,10 @@ class Vector
 {
 private:
     const size_t CAPACITY_ENCREASE_FACTOR = 2;
-    size_t           mSize;
-    size_t           mCapacity;
-    T*               A;
-    Alloc            mAlloc;
+    size_t       mSize;
+    size_t       mCapacity;
+    T*           A;
+    Alloc        mAlloc;
 
     using AllocTraits = std::allocator_traits<Alloc>;
 
@@ -23,18 +23,12 @@ private:
 public:
     Vector() noexcept : mSize(0), mCapacity(0), A(nullptr){};
     Vector(const size_t length, const T& elem = T()) noexcept;
+    Vector(const size_t length, T&& elem) noexcept;
     Vector(const std::initializer_list<T>& list) noexcept;
-    Vector(const Vector<T>& vector) noexcept;
+    Vector(std::initializer_list<T>&& list) noexcept;
+    Vector(const Vector<T>& vector);
     Vector(Vector<T>&& vector) noexcept;
-
-    ~Vector()
-    {
-        for (size_t i = 0; i < mSize; ++i)
-        {
-            AllocTraits::destroy(mAlloc, A + i);
-        }
-        AllocTraits::deallocate(mAlloc, A, mCapacity);
-    }
+    ~Vector() noexcept;
 
     inline T& at(const int index) const;
     inline T& at(const size_t index) const;
@@ -47,10 +41,13 @@ public:
     void reserve(const size_t newCapacity) noexcept;
 
     void insert(const int index, const T& elem);
+    void insert(const int index, T&& elem);
     void erase(const int index);
 
     void push_back(const T& elem) { insert(static_cast<int>(mSize), elem); }
+    void push_back(T&& elem) { insert(static_cast<int>(mSize), std::move(elem)); }
     void push_front(const T& elem) { insert(0, elem); }
+    void push_front(T&& elem) { insert(0, std::move(elem)); }
     void pop_back() { erase(static_cast<int>(mSize) - 1); }
     void pop_front() { erase(0); }
 };
@@ -89,15 +86,28 @@ void Vector<T, Alloc>::alloc_new()
 }
 
 template <class T, class Alloc>
-Vector<T, Alloc>::Vector(const Vector<T>& vector) noexcept
+Vector<T, Alloc>::Vector(const Vector<T>& vector)
 {
     mSize     = vector.mSize;
     mCapacity = vector.mCapacity;
     A         = AllocTraits::allocate(mAlloc, mCapacity);
 
-    for (size_t i = 0; i < vector.mSize; ++i)
+    size_t i = 0;
+    try
     {
-        AllocTraits::construct(mAlloc, A + i, vector[i]);
+        for (; i < vector.mSize; ++i)
+        {
+            AllocTraits::construct(mAlloc, A + i, vector[i]);
+        }
+    }
+    catch (...)
+    {
+        for (size_t j = 0; j < i; ++j)
+        {
+            AllocTraits::destroy(mAlloc, A + j);
+        }
+        AllocTraits::deallocate(mAlloc, A, mCapacity);
+        throw;
     }
 }
 
@@ -105,11 +115,21 @@ template <class T, class Alloc>
 Vector<T, Alloc>::Vector(Vector<T>&& vector) noexcept
 {
     A                = vector.A;
-    mCapacity        = mCapacity;
-    mSize            = mSize;
+    mCapacity        = vector.mCapacity;
+    mSize            = vector.mSize;
     vector.A         = nullptr;
     vector.mCapacity = 0;
     vector.mSize     = 0;
+}
+
+template <class T, class Alloc>
+Vector<T, Alloc>::~Vector() noexcept
+{
+    for (size_t i = 0; i < mSize; ++i)
+    {
+        AllocTraits::destroy(mAlloc, A + i);
+    }
+    AllocTraits::deallocate(mAlloc, A, mCapacity);
 }
 
 template <class T, class Alloc>
@@ -125,16 +145,43 @@ Vector<T, Alloc>::Vector(const size_t length, const T& elem) noexcept
 }
 
 template <class T, class Alloc>
+Vector<T, Alloc>::Vector(const size_t length, T&& elem) noexcept
+{
+    mSize     = length;
+    mCapacity = length * CAPACITY_ENCREASE_FACTOR;
+    A         = AllocTraits::allocate(mAlloc, mCapacity);
+    for (size_t i = 0; i < mSize; ++i)
+    {
+        AllocTraits::construct(mAlloc, A + i, std::move(elem));
+    }
+}
+
+template <class T, class Alloc>
 Vector<T, Alloc>::Vector(const std::initializer_list<T>& list) noexcept
 {
     mSize     = list.size();
-    mCapacity = list.size() * 2;
+    mCapacity = list.size() * CAPACITY_ENCREASE_FACTOR;
     A         = AllocTraits::allocate(mAlloc, mCapacity);
 
     size_t i = 0;
     for (const auto& elem : list)
     {
         AllocTraits::construct(mAlloc, A + i, elem);
+        ++i;
+    }
+}
+
+template <class T, class Alloc>
+Vector<T, Alloc>::Vector(std::initializer_list<T>&& list) noexcept
+{
+    mSize     = list.size();
+    mCapacity = list.size() * CAPACITY_ENCREASE_FACTOR;
+    A         = AllocTraits::allocate(mAlloc, mCapacity);
+
+    size_t i = 0;
+    for (auto&& elem : list)
+    {
+        AllocTraits::construct(mAlloc, A + i, std::move(elem));
         ++i;
     }
 }
@@ -192,6 +239,29 @@ void Vector<T, Alloc>::insert(const int index, const T& elem)
         AllocTraits::construct(mAlloc, A + i + 1, A[i]);
     }
     AllocTraits::construct(mAlloc, A + index, elem);
+
+    mSize++;
+}
+
+template <class T, class Alloc>
+void Vector<T, Alloc>::insert(const int index, T&& elem)
+{
+    if (index < 0)
+    {
+        throw Danils::VectorException(VectorException::ErrorsCodes::OUT_OF_RANGE);
+    }
+
+    if (mSize >= mCapacity)
+    {
+        mCapacity *= CAPACITY_ENCREASE_FACTOR;
+        alloc_new();
+    }
+
+    for (int i = static_cast<int>(mSize) - 1; i >= index; --i)
+    {
+        AllocTraits::construct(mAlloc, A + i + 1, std::move(A[i]));
+    }
+    AllocTraits::construct(mAlloc, A + index, std::move(elem));
 
     mSize++;
 }

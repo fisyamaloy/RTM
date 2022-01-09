@@ -1,7 +1,7 @@
 set(TARGET DanilsVector)
 
 set(SOURCE_FILES
-   main.cpp
+   MainTests.cpp
    Vector.hpp
    VectorException.hpp)
 
