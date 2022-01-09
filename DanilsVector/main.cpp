@@ -77,15 +77,17 @@ TEST_F(TestStudent, DefaultConstructor)
 
 TEST(ConstructorTest, InitListConstructor)
 {
-    Danils::Vector<int> A = {1, 30, -5, -23, 7};
-    ASSERT_TRUE(A.capacity() == 10);
-    ASSERT_TRUE(A.size() == 5);
+    {
+        Danils::Vector<int> A = {1, 30, -5, -23, 7};
+        ASSERT_TRUE(A.capacity() == 10);
+        ASSERT_TRUE(A.size() == 5);
 
-    ASSERT_TRUE(A[0] == 1);
-    ASSERT_TRUE(A[1] == 30);
-    ASSERT_TRUE(A[2] == -5);
-    ASSERT_TRUE(A[3] == -23);
-    ASSERT_TRUE(A[4] == 7);
+        ASSERT_TRUE(A[0] == 1);
+        ASSERT_TRUE(A[1] == 30);
+        ASSERT_TRUE(A[2] == -5);
+        ASSERT_TRUE(A[3] == -23);
+        ASSERT_TRUE(A[4] == 7);
+    }
 }
 
 TEST(ConstructorTest, CopyConstructor)

@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdlib>
+//#define DEBUG
 
 namespace Danils
 {
@@ -17,11 +18,21 @@ struct Allocator
 
     pointer allocate(const size_type n)
     {
-        return static_cast<pointer>(::operator new(n * sizeof(T)));  // Function operator new
+        size_type size = n * sizeof(value_type);
+
+#ifdef DEBUG
+        std::cout << "Allocated " << size << " bytes" << std::endl;
+#endif  // DEBUG
+
+        return static_cast<pointer>(::operator new(size));  // Function operator new
     }
 
-    void deallocate(pointer p, size_type)
+    void deallocate(pointer p, [[maybe_unused]] size_type size)
     {
+#ifdef DEBUG
+        std::cout << "Deallocated " << size * sizeof(value_type) << " bytes" << std::endl;
+#endif  // DEBUG
+
         ::operator delete(p);  // Function operator delete
     }
 

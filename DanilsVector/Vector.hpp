@@ -10,10 +10,11 @@ template <class T, class Alloc = Danils::Allocator<T>>
 class Vector
 {
 private:
-    size_t mSize;
-    size_t mCapacity;
-    T*     A;
-    Alloc mAlloc;
+    const size_t CAPACITY_ENCREASE_FACTOR = 2;
+    size_t           mSize;
+    size_t           mCapacity;
+    T*               A;
+    Alloc            mAlloc;
 
     using AllocTraits = std::allocator_traits<Alloc>;
 
@@ -27,7 +28,7 @@ public:
     Vector(Vector<T>&& vector) noexcept;
 
     ~Vector()
-    { 
+    {
         for (size_t i = 0; i < mSize; ++i)
         {
             AllocTraits::destroy(mAlloc, A + i);
@@ -60,22 +61,28 @@ template <class T, class Alloc>
 void Vector<T, Alloc>::alloc_new()
 {
     T*     newArray = AllocTraits::allocate(mAlloc, mCapacity);
-    size_t i = 0;
+    size_t i        = 0;
     try
     {
         for (; i < mSize; ++i)
+        {
             AllocTraits::construct(mAlloc, newArray + i, A[i]);
+        }
     }
     catch (...)
     {
         for (size_t j = 0; j < i; ++j)
+        {
             AllocTraits::destroy(mAlloc, newArray + j);
+        }
         AllocTraits::deallocate(mAlloc, newArray, mCapacity);
         throw;
     }
 
     for (i = 0; i < mSize; ++i)
+    {
         AllocTraits::destroy(mAlloc, A + i);
+    }
     AllocTraits::deallocate(mAlloc, A, mCapacity);
 
     A = newArray;
@@ -86,7 +93,7 @@ Vector<T, Alloc>::Vector(const Vector<T>& vector) noexcept
 {
     mSize     = vector.mSize;
     mCapacity = vector.mCapacity;
-    A = AllocTraits::allocate(mAlloc, mCapacity);
+    A         = AllocTraits::allocate(mAlloc, mCapacity);
 
     for (size_t i = 0; i < vector.mSize; ++i)
     {
@@ -97,9 +104,9 @@ Vector<T, Alloc>::Vector(const Vector<T>& vector) noexcept
 template <class T, class Alloc>
 Vector<T, Alloc>::Vector(Vector<T>&& vector) noexcept
 {
-    A         = vector.A;
-    mCapacity = mCapacity;
-    mSize     = mSize;
+    A                = vector.A;
+    mCapacity        = mCapacity;
+    mSize            = mSize;
     vector.A         = nullptr;
     vector.mCapacity = 0;
     vector.mSize     = 0;
@@ -109,7 +116,7 @@ template <class T, class Alloc>
 Vector<T, Alloc>::Vector(const size_t length, const T& elem) noexcept
 {
     mSize     = length;
-    mCapacity = length * 2;
+    mCapacity = length * CAPACITY_ENCREASE_FACTOR;
     A         = AllocTraits::allocate(mAlloc, mCapacity);
     for (size_t i = 0; i < mSize; ++i)
     {
@@ -176,7 +183,7 @@ void Vector<T, Alloc>::insert(const int index, const T& elem)
 
     if (mSize >= mCapacity)
     {
-        mCapacity = mSize * 2;
+        mCapacity *= CAPACITY_ENCREASE_FACTOR;
         alloc_new();
     }
 
