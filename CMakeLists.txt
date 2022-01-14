@@ -39,3 +39,4 @@ enable_testing()
 
 add_subdirectory(DanilsVector)
 add_subdirectory(CustomKeyForHash)
+add_subdirectory(ADLExample)
