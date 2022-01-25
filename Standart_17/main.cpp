@@ -13,6 +13,10 @@ int main()
     fold_expression_examples::example_3();
 
     file_system_examples::example_1();
+    file_system_examples::example_2();
+    file_system_examples::example_3();
+    file_system_examples::example_4();
+    file_system_examples::example_5();
 
     return 0;
 }
