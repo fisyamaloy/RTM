@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 
 // Filesystem is a crossplatform library which allows working with files and folders
 namespace file_system_examples
@@ -104,7 +105,7 @@ namespace file_system_examples
     {
         const auto dirIter     = fs::directory_iterator(dirPath);
         const auto filesAmount = std::count_if(begin(dirIter), end(dirIter), 
-                                 [](const auto& file) { return file.is_regular_file(); });
+                                 [](auto&& file) { return file.is_regular_file(); });
         std::vector<fs::path> files(filesAmount);
         size_t i = 0;
         for (auto&& entry : fs::recursive_directory_iterator(dirPath))
