@@ -1,5 +1,6 @@
 #include <filesystem>
 #include <fstream>
+#include <vector>
 
 // Filesystem is a crossplatform library which allows working with files and folders
 namespace file_system_examples
@@ -142,7 +143,7 @@ namespace file_system_examples
             std::cout << file.filename() << " ";
         }
 
-        std::cout << '\n' << std::endl;
+        std::cout << std::endl;
     }
 
 }  // namespace file_system_examples
