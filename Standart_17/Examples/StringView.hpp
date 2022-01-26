@@ -8,6 +8,8 @@ namespace string_view_examples
 {
     void example_1()
     {
+        std::cout << "example_1:" << std::endl;
+
         constexpr size_t LENGTH           = 13;
         char             original[LENGTH] = "Hello, world";
 

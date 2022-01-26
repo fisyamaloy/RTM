@@ -10,6 +10,7 @@ namespace file_system_examples
 
     void example_1()
     {
+        std::cout << "example_1:" << std::endl;
         // Path to executable file
         std::cout << fs::current_path() << std::endl;
 
@@ -28,6 +29,8 @@ namespace file_system_examples
 
     void example_2()
     {
+        std::cout << "example_2:" << std::endl;
+
         const fs::path filePath =
             "C:\\Users\\Danil_Fisiuk\\source\\repos\\RTM\\Standart_17\\Examples\\Inlet.txt";
 
@@ -52,6 +55,8 @@ namespace file_system_examples
     // Creating directories
     void example_3()
     {
+        std::cout << "example_3:" << std::endl;
+
         const auto currentPath = fs::current_path();
 
         fs::create_directory(currentPath / "Fisya");
@@ -67,6 +72,8 @@ namespace file_system_examples
     // Removing directories
     void example_4()
     {
+        std::cout << "example_4:" << std::endl;
+
         const auto currentPath = fs::current_path();
 
         fs::remove(currentPath / "Fisya" / "b" / "bb_1");
@@ -96,9 +103,7 @@ namespace file_system_examples
                     const bool fileExtMatchesFilter =
                         ((entry.path().extension().string() == exts) || ...);
                     if (fileExtMatchesFilter)
-                    {
                         files.emplace_back(entry.path());
-                    }
                 }
                 else
                 {
@@ -124,6 +129,8 @@ namespace file_system_examples
 
     void example_5()
     {
+        std::cout << "example_5:" << std::endl;
+
         const auto path = fs::current_path() / "Fisya";
         fs::create_directory(path);
         createFiles(path, "file_1.txt", "file_2.in", "file_3.png", "file_4.png", "file_5.mp3",

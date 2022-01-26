@@ -12,6 +12,8 @@ namespace fold_expression_examples
 	// 4 step - 19.
 	void example_1() 
 	{
+		std::cout << "example_1:" << std::endl;
+
         const auto sum = [](const auto... sequence) {
 			return (... + sequence);
         };
@@ -27,6 +29,8 @@ namespace fold_expression_examples
 	// Call the passed function with each of the passed elements of sequence.
 	void example_2() 
 	{
+		std::cout << "example_2:" << std::endl;
+
 		call([](auto v) {std::cout << v << " ";}, 
 			5, 4, " <--> ", "END");
 
@@ -41,6 +45,8 @@ namespace fold_expression_examples
 
 	void example_3() 
 	{
+		std::cout << "example_3:" << std::endl;
+
 		std::cout << (areElemsPositive(5, 10, 13) ? "Yes" : "No") << std::endl;
 		std::cout << (areElemsPositive(5, 10, -723, 13) ? "Yes" : "No") << std::endl;
 	}
