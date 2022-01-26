@@ -1,7 +1,7 @@
+﻿#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <vector>
-#include <algorithm>
 
 // Filesystem is a crossplatform library which allows working with files and folders
 namespace file_system_examples
@@ -39,8 +39,8 @@ namespace file_system_examples
         std::cout << "Separator in my OS is " << fs::path::preferred_separator << std::endl;
 
         const fs::path root      = "C:\\";
-        const fs::path  dir       = "Danil_Fisiuk\\source\\repos\\RTM\\Standart_17\\Examples";
-        const fs::path  inputFile = "Inlet.txt";
+        const fs::path dir       = "Danil_Fisiuk\\source\\repos\\RTM\\Standart_17\\Examples";
+        const fs::path inputFile = "Inlet.txt";
 
         // We can format pathes using path-objects
         const auto pathInputFIle = root / dir / inputFile;
@@ -50,7 +50,7 @@ namespace file_system_examples
     }
 
     // Creating directories
-    void example_3() 
+    void example_3()
     {
         const auto currentPath = fs::current_path();
 
@@ -76,43 +76,34 @@ namespace file_system_examples
         std::cout << std::endl;
     }
 
-    template<class... Extention>
-    std::vector<fs::path> getDirFilesByExtFilter(const fs::path& dirPath, Extention&&... exts) 
+    template <class... Extention>
+    std::vector<fs::path> getDirFilesByExtFilter(const fs::path& dirPath, Extention&&... exts)
     {
+        // Reduce & transform
         const auto dirIter     = fs::directory_iterator(dirPath);
-        const auto filesAmount = std::count_if(begin(dirIter), end(dirIter), 
-                                 [](const auto& file) { return file.is_regular_file(); });
+        const auto filesAmount = std::count_if(begin(dirIter), end(dirIter),
+                                               [](const auto& file) { return file.is_regular_file(); });
 
-        size_t i = 0;
-        std::vector<fs::path> files(filesAmount);
+        std::vector<fs::path> files;
+        files.reserve(filesAmount);
+
         for (auto&& entry : fs::recursive_directory_iterator(dirPath))
         {
             if (fs::is_regular_file(entry))
             {
-                const bool fileExtMatchesFilter = ((entry.path().extension().string() == exts) || ...);
-                if (fileExtMatchesFilter)
+                if constexpr (sizeof...(Extention) != 0U)
                 {
-                    files[i++] = entry.path();
+                    const bool fileExtMatchesFilter =
+                        ((entry.path().extension().string() == exts) || ...);
+                    if (fileExtMatchesFilter)
+                    {
+                        files.emplace_back(entry.path());
+                    }
                 }
-            }
-        }
-        files.resize(i);
-        
-        return files;
-    }
-
-    std::vector<fs::path> getDirFilesByExtFilter(const fs::path& dirPath)
-    {
-        const auto dirIter     = fs::directory_iterator(dirPath);
-        const auto filesAmount = std::count_if(begin(dirIter), end(dirIter), 
-                                 [](auto&& file) { return file.is_regular_file(); });
-        std::vector<fs::path> files(filesAmount);
-        size_t i = 0;
-        for (auto&& entry : fs::recursive_directory_iterator(dirPath))
-        {
-            if (fs::is_regular_file(entry))
-            {
-                files[i++] = entry.path();
+                else
+                {
+                    files.emplace_back(entry.path());
+                }
             }
         }
 
@@ -122,7 +113,7 @@ namespace file_system_examples
     template <class... T>
     void createFiles(const fs::path& path, T&&... args)
     {
-        auto createFile = [&path](const char fileName[]) {
+        const auto createFile = [&path](std::string_view fileName) {
             std::ofstream file(path / fileName);
             file << "\n";
             file.close();
@@ -131,14 +122,14 @@ namespace file_system_examples
         (createFile(args), ...);
     }
 
-    void example_5() 
+    void example_5()
     {
         const auto path = fs::current_path() / "Fisya";
         fs::create_directory(path);
         createFiles(path, "file_1.txt", "file_2.in", "file_3.png", "file_4.png", "file_5.mp3",
                     "file_6.mp3", "file_7.mp3");
-    
-        const auto files = getDirFilesByExtFilter(path, ".mp3", ".png");
+
+        const auto files = getDirFilesByExtFilter(path);
         for (auto&& file : files)
         {
             std::cout << file.filename() << " ";

@@ -14,7 +14,6 @@ void foo([[maybe_unused]] const A::C c) { std::cout << "C" << std::endl; }
 int main()
 {
     A::C c;
-
     // foo(c); - ADL error
     /*
         C++ standart says the next: if we call any function with namespaced argument then /
@@ -22,7 +21,6 @@ int main()
         Here we have an error, because compiler doesn't know which of the functions should be /
         selected. Below you can see examples how to avoid it.
     */
-
     A::foo(c);  // if we need a function from namespace     - prefered option
     ::foo(c);   // if we need a function not from namespace - prefered option
     (foo)(c);   // if we need a function not from namespace - not prefered (unreadable)

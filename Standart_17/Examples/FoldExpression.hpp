@@ -12,7 +12,7 @@ namespace fold_expression_examples
 	// 4 step - 19.
 	void example_1() 
 	{
-        auto sum = [](const auto... sequence) {
+        const auto sum = [](const auto... sequence) {
 			return (... + sequence);
         };
 		std::cout << sum(-5, 5, 0, 4, 3, 3) << std::endl;
