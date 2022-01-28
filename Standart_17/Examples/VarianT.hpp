@@ -1,6 +1,7 @@
 #include <iostream>
 #include <variant>
 #include <string_view>
+#include <memory>
 /*
 std::variant is a class which are based on Union, but variant remembers type it stores. /
 Moreover, std::variant can store non-POD-types.
