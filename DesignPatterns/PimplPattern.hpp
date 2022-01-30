@@ -19,4 +19,4 @@ namespace PimplPattern
                                    [[maybe_unused]] std::string_view text);
     };
 
-};  // namespace PimplPattern
+}  // namespace PimplPattern
