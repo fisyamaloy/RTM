@@ -1,80 +1,88 @@
+#define once
 #include <memory>
 #include <string_view>
 
-struct IFileOutputter
+namespace FactoryParttern
 {
-    virtual void writeMessage([[maybe_unused]] std::string_view filePath,
-                              [[maybe_unused]] std::string_view message) const = 0;
-
-    virtual ~IFileOutputter() = default;
-};
-
-struct WindowsFileOutputter : IFileOutputter
-{
-    WindowsFileOutputter()                       = default;
-    WindowsFileOutputter(WindowsFileOutputter&&) = default;
-    ~WindowsFileOutputter()                      = default;
-
-    void writeMessage([[maybe_unused]] std::string_view filePath,
-                      [[maybe_unused]] std::string_view message) const override
+    struct IFileOutputter
     {
-        // Specific code for windows-system
-    }
-};
+        virtual void writeMessage([[maybe_unused]] std::string_view filePath,
+                                  [[maybe_unused]] std::string_view message) const = 0;
 
-struct LinuxFileOutputter : IFileOutputter
-{
-    LinuxFileOutputter()                     = default;
-    LinuxFileOutputter(LinuxFileOutputter&&) = default;
-    ~LinuxFileOutputter()                    = default;
+        virtual ~IFileOutputter() = default;
+    };
 
-    void writeMessage([[maybe_unused]] std::string_view filePath,
-                      [[maybe_unused]] std::string_view message) const override
+    struct WindowsFileOutputter : IFileOutputter
     {
-        // Specific code for Linux-system
-    }
-};
+        WindowsFileOutputter()                       = default;
+        WindowsFileOutputter(WindowsFileOutputter&&) = default;
+        ~WindowsFileOutputter()                      = default;
 
-enum class SystemType
-{
-    WINDOWS,
-    LINUX
-};
-
-struct FileOutputterFactory
-{
-    std::unique_ptr<IFileOutputter> createFileOutputter(const SystemType systemType) const
-    {
-        switch (systemType)
+        void writeMessage([[maybe_unused]] std::string_view filePath,
+                          [[maybe_unused]] std::string_view message) const override
         {
-            case SystemType::WINDOWS:
+            // Specific code for windows-system
+        }
+    };
+
+    struct LinuxFileOutputter : IFileOutputter
+    {
+        LinuxFileOutputter()                     = default;
+        LinuxFileOutputter(LinuxFileOutputter&&) = default;
+        ~LinuxFileOutputter()                    = default;
+
+        void writeMessage([[maybe_unused]] std::string_view filePath,
+                          [[maybe_unused]] std::string_view message) const override
+        {
+            // Specific code for Linux-system
+        }
+    };
+
+    enum class SystemType
+    {
+        WINDOWS,
+        LINUX
+    };
+
+    struct FileOutputterFactory
+    {
+        std::unique_ptr<IFileOutputter> createFileOutputter(const SystemType systemType) const
+        {
+            switch (systemType)
             {
-                return std::make_unique<WindowsFileOutputter>();
-            }
-            case SystemType::LINUX:
-            {
-                return std::make_unique<LinuxFileOutputter>();
-            }
-            default:
-            {
-                return std::make_unique<LinuxFileOutputter>();
+                case SystemType::WINDOWS:
+                {
+                    return std::make_unique<WindowsFileOutputter>();
+                }
+                case SystemType::LINUX:
+                {
+                    return std::make_unique<LinuxFileOutputter>();
+                }
+                default:
+                {
+                    return std::make_unique<LinuxFileOutputter>();
+                }
             }
         }
-    }
-};
+    };
 
-struct FilesWorker
+}  // namespace FactoryPatter
+
+struct DIPattern
 {
-    FilesWorker(std::unique_ptr<IFileOutputter> fileOutputter)
+    struct FilesWorker
     {
-        this->fileOutputter = std::move(fileOutputter);
-    }
+        FilesWorker(std::unique_ptr<FactoryParttern::IFileOutputter> fileOutputter)
+        {
+            this->fileOutputter = std::move(fileOutputter);
+        }
 
-    void write(std::string_view path, std::string_view text)
-    {
-        fileOutputter->writeMessage(path, text);
-    }
+        void write(std::string_view path, std::string_view text)
+        {
+            fileOutputter->writeMessage(path, text);
+        }
 
-private:
-    std::unique_ptr<IFileOutputter> fileOutputter;
+    private:
+        std::unique_ptr<FactoryParttern::IFileOutputter> fileOutputter;
+    };
 };

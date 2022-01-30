@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 
 // Fold is a function, which applies a combination to sequential elements-pairs and /

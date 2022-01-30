@@ -1,15 +1,20 @@
 #include <iostream>
 #include "Patterns.hpp"
+#include "PimplPattern.hpp"
 
 int main()
 {
 	// Factory method
-    FileOutputterFactory outputterFactory;
-    auto linuxFileOtputter = outputterFactory.createFileOutputter(SystemType::LINUX);
+    FactoryParttern::FileOutputterFactory outputterFactory;
+    auto linuxFileOtputter = 
+		outputterFactory.createFileOutputter(FactoryParttern::SystemType::LINUX);
 	
 	// Dependency injection
-	FilesWorker fileWorker(std::move(linuxFileOtputter));
+	DIPattern::FilesWorker fileWorker(std::move(linuxFileOtputter));
 	fileWorker.write("BabePath", "Hello, world");
+
+	PimplPattern::FileWorker fw;
+    fw.outputMessage("path", "string");
 
 	return 0;
 }

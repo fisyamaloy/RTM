@@ -1,4 +1,5 @@
-﻿#include <algorithm>
+﻿#pragma once
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <vector>
