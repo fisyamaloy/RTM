@@ -10,8 +10,6 @@ set (CXX_EXTENSIONS off)
 # For those VSCode users
 set(EXPORT_COMPILE_COMMANDS TRUE)
 
-add_compile_options(-pthread)
-
 # Set warnings level higher and force treating them as errors.
 # GCC TBD
 if (MSVC)
