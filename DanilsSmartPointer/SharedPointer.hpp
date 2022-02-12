@@ -1,29 +1,36 @@
 #include <mutex>
+#include <utility>
 
 namespace Danils
 {
     template <class T>
     class SharedPointer
     {
-        T*      ptr     = nullptr;
-        size_t* counter = nullptr;
-        mutable std::mutex mutex;
+        T*                  ptr     = nullptr;
+        size_t*             counter = nullptr;
+        mutable std::mutex* mutex   = nullptr;
+
+        template <class T, class... Args>
+        friend SharedPointer<T> make_shared(Args&&... args);
 
     public:
         SharedPointer() = default;
-        SharedPointer(T* ptr) : ptr(ptr), counter(new size_t(1)) {}
-        SharedPointer(const SharedPointer<T>& other) : ptr(other.ptr), counter(other.counter)
+        SharedPointer(T* ptr) : ptr(ptr), counter(new size_t(1)), mutex(new std::mutex) {}
+        SharedPointer(const SharedPointer<T>& other)
+            : ptr(other.ptr), counter(other.counter), mutex(other.mutex)
         {
             ++*counter;
         }
-        SharedPointer(SharedPointer<T>&& other) noexcept : ptr(other.ptr), counter(other.counter)
+        SharedPointer(SharedPointer<T>&& other) noexcept
+            : ptr(other.ptr), counter(other.counter), mutex(other.mutex)
         {
             other.ptr     = nullptr;
             other.counter = nullptr;
+            other.mutex   = nullptr;
         }
         ~SharedPointer() noexcept
         {
-            std::lock_guard<std::mutex> lg(mutex);
+            std::lock_guard<std::mutex> lg(*mutex);
 
             if (*counter != 1)
             {
@@ -38,10 +45,14 @@ namespace Danils
         T& operator*() const { return *ptr; }
         T* operator->() const { return ptr; }
 
-        constexpr size_t use_count() const 
-        {
-            return *counter;
-        }
+        constexpr size_t use_count() const { return *counter; }
     };
+
+    template <class T, class... Args>
+    SharedPointer<T> make_shared(Args&&... args)
+    {
+        auto ptr = new T(std::forward<Args>(args)...);
+        return SharedPointer<T>(ptr);
+    }
 
 }  // namespace Danils
