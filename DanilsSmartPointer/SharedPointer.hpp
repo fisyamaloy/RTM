@@ -10,8 +10,8 @@ namespace Danils
         size_t*             counter = nullptr;
         mutable std::mutex* mutex   = nullptr;
 
-        template <class T, class... Args>
-        friend SharedPointer<T> make_shared(Args&&... args);
+        template <class U, class... Args>
+        friend SharedPointer<U> make_shared(Args&&... args);
 
     public:
         SharedPointer() = default;
@@ -48,11 +48,11 @@ namespace Danils
         constexpr size_t use_count() const { return *counter; }
     };
 
-    template <class T, class... Args>
-    SharedPointer<T> make_shared(Args&&... args)
+    template <class U, class... Args>
+    SharedPointer<U> make_shared(Args&&... args)
     {
-        auto ptr = new T(std::forward<Args>(args)...);
-        return SharedPointer<T>(ptr);
+        auto ptr = new U(std::forward<Args>(args)...);
+        return SharedPointer<U>(ptr);
     }
 
 }  // namespace Danils
