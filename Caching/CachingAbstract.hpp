@@ -16,6 +16,6 @@ struct CachingAbstract
 
 protected:
     std::unordered_map<Key, value_type> cacheItems;
-    std::size_t                         maxCacheSize = 2;
+    std::size_t                         maxCacheSize = 10;
     mutable std::mutex                  mut;
 };
