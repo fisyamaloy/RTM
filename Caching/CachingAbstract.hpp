@@ -6,7 +6,7 @@
 template <class Key, class value_type>
 struct CachingAbstract
 {
-    void setMaxCacheSize(const std::size_t limit) { maxCacheSize = limit; }
+    virtual void setMaxCacheSize(const std::size_t limit) { maxCacheSize = limit; }
 
     virtual void putItem([[maybe_unused]] const Key&,
                          [[maybe_unused]] const std::shared_ptr<value_type>&) = 0;

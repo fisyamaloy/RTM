@@ -8,7 +8,7 @@ template <class Key, class value_type>
 struct SimpleCache : CachingAbstract<Key, value_type>
 {
     SimpleCache() = default;
-    SimpleCache(const size_t limit) { setMaxCacheSize(limit); }
+    SimpleCache(const size_t limit) { maxCacheSize = limit; }
 
     void putItem(const Key& key, const std::shared_ptr<value_type>& valuePtr) override;
     std::shared_ptr<value_type> getItem(const Key& key) const override;
