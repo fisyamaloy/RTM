@@ -8,12 +8,11 @@ struct CachingAbstract
 {
     virtual void setMaxCacheSize(const std::size_t limit) { maxCacheSize = limit; }
 
-    virtual void putItem([[maybe_unused]] const Key&,
-                         [[maybe_unused]] const std::shared_ptr<value_type>&) = 0;
+    virtual void putItem(const Key&, const std::shared_ptr<value_type>&) = 0;
 
     virtual std::shared_ptr<value_type> getItem(const Key& key) const = 0;
 
-    ~CachingAbstract() = default;
+    virtual ~CachingAbstract() = default;
 
 protected:
     std::unordered_map<Key, value_type> cacheItems;
