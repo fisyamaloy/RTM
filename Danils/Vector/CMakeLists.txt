@@ -1,4 +1,4 @@
-set(TARGET DanilsVector)
+set(TARGET Vector)
 
 set(SOURCE_FILES
    MainTests.cpp
@@ -8,6 +8,3 @@ set(SOURCE_FILES
 add_executable(${TARGET} ${SOURCE_FILES})
 
 target_link_libraries(${TARGET} PRIVATE ${EXTRA_LIBS} CONAN_PKG::gtest)
-
-#target_include_directories(${TARGET} PRIVATE
-#    $<TARGET_PROPERTY:Allocator,SOURCE_DIR>/..)

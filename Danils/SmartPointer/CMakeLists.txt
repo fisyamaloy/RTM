@@ -1,4 +1,4 @@
-set(TARGET DanilsSmartPointer)
+set(TARGET SmartPointer)
 
 set(SOURCE_FILES
    main.cpp

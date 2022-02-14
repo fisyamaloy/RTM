@@ -37,11 +37,10 @@ conan_cmake_run(CONANFILE conanfile.txt
 
 enable_testing()
 
-add_subdirectory(DanilsVector)
 add_subdirectory(CustomKeyForHash)
 add_subdirectory(ADLExample)
 add_subdirectory(Standart_17)
 add_subdirectory(DesignPatterns)
 add_subdirectory(Multythreading)
-add_subdirectory(DanilsSmartPointer)
+add_subdirectory(Danils)
 add_subdirectory(Caching)
