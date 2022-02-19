@@ -12,8 +12,10 @@ public:
     SimpleCache(const size_t limit) { this->maxCacheSize = limit; }
     ~SimpleCache() = default;
 
-    void       putItem(const Key& key, std::shared_ptr<value_type>& valuePtr) override;
-    value_type getItem(const Key& key) const override;
+    void putItem(const Key& key, std::shared_ptr<value_type>& valuePtr) override;
+    void putItem(const Key& key, std::shared_ptr<value_type>&& valuePtr) = delete;
+
+    std::shared_ptr<value_type> getItem(const Key& key) const override;
 };
 
 template <class Key, class value_type>
@@ -37,7 +39,7 @@ void SimpleCache<Key, value_type>::putItem(const Key& key, std::shared_ptr<value
 }
 
 template <class Key, class value_type>
-value_type SimpleCache<Key, value_type>::getItem(const Key& key) const
+std::shared_ptr<value_type> SimpleCache<Key, value_type>::getItem(const Key& key) const
 {
     std::lock_guard<std::mutex> lg(this->mut);
 
@@ -47,5 +49,5 @@ value_type SimpleCache<Key, value_type>::getItem(const Key& key) const
         throw std::range_error("No such key in the cache");
     }
 
-    return *mapItemIterator->second.lock();
+    return mapItemIterator->second.lock();
 }
