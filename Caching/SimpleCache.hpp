@@ -12,14 +12,14 @@ public:
     SimpleCache(const size_t limit) { this->maxCacheSize = limit; }
     ~SimpleCache() = default;
 
-    void putItem(const Key& key, std::shared_ptr<value_type>& valuePtr) override;
+    void putItem(const Key& key, std::shared_ptr<value_type> valuePtr) override;
     void putItem(const Key& key, std::shared_ptr<value_type>&& valuePtr) = delete;
 
     std::shared_ptr<value_type> getItem(const Key& key) const override;
 };
 
 template <class Key, class value_type>
-void SimpleCache<Key, value_type>::putItem(const Key& key, std::shared_ptr<value_type>& valuePtr)
+void SimpleCache<Key, value_type>::putItem(const Key& key, std::shared_ptr<value_type> valuePtr)
 {
     std::lock_guard<std::mutex> lg(this->mut);
 
