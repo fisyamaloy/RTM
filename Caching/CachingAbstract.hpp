@@ -9,8 +9,7 @@ class CachingAbstract
 public:
     inline    void   setMaxCacheSize(const std::size_t limit) { maxCacheSize = limit; }
     constexpr size_t getMaxCacheSize() const { return maxCacheSize; }
-
-    const size_t getCacheSize() const { return cacheItems.size(); }
+    inline    size_t getCacheSize() const { return cacheItems.size(); }
 
     void         putItem(const Key& key, std::shared_ptr<value_type>&& valuePtr) = delete;
     virtual void putItem(const Key& key, std::shared_ptr<value_type> valuePtr)  = 0;
