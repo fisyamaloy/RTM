@@ -7,7 +7,7 @@ template <class CashingAlgorithm, class Key, class value_type>
 class CachingCRTP
 {
 public:
-    inline void   setMaxCacheSize(const std::size_t limit) { self()->setMaxCacheSize() }
+    inline void   setMaxCacheSize(const std::size_t limit) { self()->setMaxCacheSize(); }
     inline size_t getMaxCacheSize() const { return self()->getMaxCacheSize(); }
     inline size_t getCacheSize() const { return self()->getCacheSize(); }
 
