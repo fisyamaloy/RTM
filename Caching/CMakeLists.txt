@@ -2,7 +2,7 @@ set(TARGET Caching)
 
 set(SOURCE_FILES
    MainTests.cpp
-   CachingAbstract.hpp)
+   CachingCRTP.hpp)
 
 add_executable(${TARGET} ${SOURCE_FILES})
 

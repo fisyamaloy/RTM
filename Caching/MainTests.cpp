@@ -14,10 +14,10 @@ TEST(SimpleCache, getMaxCacheSize)
     ASSERT_EQ(simpleCaching->getMaxCacheSize(), 21);
 }
 
-TEST(SimpleCache, putItem) 
+TEST(SimpleCache, putItem)
 {
     auto simpleCaching = std::make_unique<SimpleCache<char, int>>(15);
-    
+
     auto sp_1 = std::make_shared<int>(1);
     auto sp_2 = std::make_shared<int>(1);
     auto sp_3 = std::make_shared<int>(2);
@@ -49,7 +49,7 @@ TEST(SimpleCache, getItem)
     simpleCaching->putItem('a', sp_1);
     simpleCaching->putItem('b', sp_2);
     simpleCaching->putItem('c', sp_3);
-    
+
     auto sp_1_1 = simpleCaching->getItem('a');
     ASSERT_TRUE(sp_1 == sp_1_1);
 
@@ -59,17 +59,33 @@ TEST(SimpleCache, getItem)
     EXPECT_THROW(simpleCaching->getItem('Z'), std::range_error);
 }
 
+TEST(SimpleCashing, putItemUsingCRTPObject)
+{
+    auto simpleCaching = std::make_unique<CachingCRTP<SimpleCache<char, int>, char, int>>();
+
+    auto                   sp_1 = std::make_shared<int>(1);
+    auto                   sp_2 = std::make_shared<int>(1);
+    auto                   sp_3 = std::make_shared<int>(2);
+
+    simpleCaching->putItem('a', sp_1);
+    simpleCaching->putItem('b', sp_2);
+    simpleCaching->putItem('c', sp_3);
+
+    auto sp_1_1 = simpleCaching->getItem('a');
+    ASSERT_TRUE(sp_1 == sp_1_1);
+}
+
 struct User
 {
     int         id;
     std::string name;
 
-    friend bool operator==(const User& left, const User& right) 
+    friend bool operator==(const User& left, const User& right)
     {
         return left.id == right.id && left.name == right.name;
     }
 
-    User& operator=(const User& user) 
+    User& operator=(const User& user)
     {
         this->id   = user.id;
         this->name = user.name;
@@ -119,11 +135,11 @@ TEST(SimpleCache_CustomType, putItemWithCustomValue)
     ASSERT_EQ(simpleCaching->getCacheSize(), 3);
 }
 
-TEST(SimpleCache_CustomType, putItemWithCustomKey) 
+TEST(SimpleCache_CustomType, putItemWithCustomKey)
 {
     User user_1{1, "Danil"}, user_2{2, "Katya"}, user_3{3, "asfs"}, user_4{4, "fgsdfsdfg"};
     auto simpleCaching = std::make_unique<SimpleCache<User, int>>(3);
-    
+
     auto sp_1 = std::make_shared<int>(1);
     auto sp_2 = std::make_shared<int>(1);
     auto sp_3 = std::make_shared<int>(2);

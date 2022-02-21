@@ -2,20 +2,24 @@
 #include <deque>
 #include <random>
 
-#include "CachingAbstract.hpp"
+#include "CachingCRTP.hpp"
 
 template <class Key, class value_type>
-class SimpleCache : public CachingAbstract<Key, value_type>
+class SimpleCache : public CachingCRTP<SimpleCache<Key, value_type>, Key, value_type>
 {
 public:
     SimpleCache() = default;
     SimpleCache(const size_t limit) { this->maxCacheSize = limit; }
     ~SimpleCache() = default;
 
-    void putItem(const Key& key, std::shared_ptr<value_type> valuePtr) override;
-    void putItem(const Key& key, std::shared_ptr<value_type>&& valuePtr) = delete;
+    void putItem(const Key& key, std::shared_ptr<value_type> valuePtr);
+    void putItem(const Key&, std::shared_ptr<value_type>&&) = delete;
 
-    std::shared_ptr<value_type> getItem(const Key& key) const override;
+    std::shared_ptr<value_type> getItem(const Key& key);
+
+    inline void   setMaxCacheSize(const std::size_t limit) { maxCacheSize = limit; }
+    inline size_t getMaxCacheSize() const { return maxCacheSize; }
+    inline size_t getCacheSize() const { return cacheItems.size(); }
 };
 
 template <class Key, class value_type>
@@ -39,7 +43,7 @@ void SimpleCache<Key, value_type>::putItem(const Key& key, std::shared_ptr<value
 }
 
 template <class Key, class value_type>
-std::shared_ptr<value_type> SimpleCache<Key, value_type>::getItem(const Key& key) const
+std::shared_ptr<value_type> SimpleCache<Key, value_type>::getItem(const Key& key)
 {
     std::lock_guard<std::mutex> lg(this->mut);
 
