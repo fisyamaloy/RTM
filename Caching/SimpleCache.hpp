@@ -17,9 +17,9 @@ public:
 
     std::shared_ptr<value_type> getItem(const Key& key);
 
-    inline void   setMaxCacheSize(const std::size_t limit) { maxCacheSize = limit; }
-    inline size_t getMaxCacheSize() const { return maxCacheSize; }
-    inline size_t getCacheSize() const { return cacheItems.size(); }
+    inline void   setMaxCacheSize(const std::size_t limit) { this->maxCacheSize = limit; }
+    inline size_t getMaxCacheSize() const { return this->maxCacheSize; }
+    inline size_t getCacheSize() const { return this->cacheItems.size(); }
 };
 
 template <class Key, class value_type>

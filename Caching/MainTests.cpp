@@ -63,9 +63,9 @@ TEST(SimpleCashing, putItemUsingCRTPObject)
 {
     auto simpleCaching = std::make_unique<CachingCRTP<SimpleCache<char, int>, char, int>>();
 
-    auto                   sp_1 = std::make_shared<int>(1);
-    auto                   sp_2 = std::make_shared<int>(1);
-    auto                   sp_3 = std::make_shared<int>(2);
+    auto sp_1 = std::make_shared<int>(1);
+    auto sp_2 = std::make_shared<int>(1);
+    auto sp_3 = std::make_shared<int>(2);
 
     simpleCaching->putItem('a', sp_1);
     simpleCaching->putItem('b', sp_2);
