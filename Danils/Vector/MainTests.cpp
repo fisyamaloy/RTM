@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <string>
 #include <unordered_set>
 
@@ -27,8 +28,7 @@ struct Student
 
     friend bool operator==(const Student& first, const Student& second)
     {
-        return first.name   == second.name && 
-               first.course == second.course &&
+        return first.name == second.name && first.course == second.course &&
                Student::areAverageStudentsGradesEqual(first, second);
     }
 
@@ -357,6 +357,36 @@ TEST_F(TestStudent, eraseThrownException)
 {
     ASSERT_ANY_THROW(students.erase(-1));
     ASSERT_ANY_THROW(students.erase(static_cast<int>(students.size())));
+}
+
+TEST(IteratorTest, BasicFunctional)
+{
+    Danils::Vector<int> v = {1, 5, 10};
+
+    auto it = v.begin();
+    ASSERT_EQ(*it, 1);
+
+    ++it;
+    ASSERT_EQ(*it, 5);
+
+    it++;
+    ASSERT_EQ(*it, 10);
+
+    it++;
+    ASSERT_EQ(it, v.end());
+}
+
+TEST(IteratorTest, AlgorithmIterator) 
+{
+    Danils::Vector<int> v = {10, 5, 10, -5};
+
+    auto it = std::find(v.cbegin(), v.cend(), 10);
+    ASSERT_EQ(*it, 10);
+
+    auto it_1 = std::find(v.cbegin(), v.cend(), 100);
+    ASSERT_EQ(it_1, v.end());
+
+    ASSERT_EQ(std::count(v.begin(), v.end(), 10), 2);
 }
 
 int main(int argc, char* argv[])

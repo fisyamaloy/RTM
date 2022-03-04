@@ -3,7 +3,8 @@ set(TARGET Vector)
 set(SOURCE_FILES
    MainTests.cpp
    Vector.hpp
-   VectorException.hpp)
+   VectorException.hpp
+   VectorIterator.hpp)
 
 add_executable(${TARGET} ${SOURCE_FILES})
 
