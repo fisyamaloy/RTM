@@ -22,28 +22,34 @@ namespace Danils
         using reference         = std::conditional_t<isConst, const T&, T&>;
         using iterator_category = std::random_access_iterator_tag;
 
-        reference operator*() const { return *ptr_; }
-        auto&     operator++()
+        reference operator*() const noexcept { return *ptr_; }
+        auto&     operator++() noexcept
         {
             ++ptr_;
             return *this;
         }
-        auto operator++(int)
+        auto operator++(int) noexcept
         {
             auto result = *this;
             ++*this;
             return result;
         }
 
+        template <bool R>
+        difference_type operator-(const VectorIterator<value_type, R>& right) const noexcept
+        {
+            return ptr_ - right.ptr_;
+        }
+
         // Support comparison between iterator and const_iterator types
         template <bool R>
-        bool operator==(const VectorIterator<value_type, R>& rhs) const
+        bool operator==(const VectorIterator<value_type, R>& rhs) const noexcept
         {
             return *ptr_ == *rhs.ptr_;
         }
 
         template <bool R>
-        bool operator!=(const VectorIterator<value_type, R>& rhs) const
+        bool operator!=(const VectorIterator<value_type, R>& rhs) const noexcept
         {
             return *ptr_ != *rhs.ptr_;
         }

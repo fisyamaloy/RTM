@@ -378,7 +378,7 @@ TEST(IteratorTest, BasicFunctional)
 
 TEST(IteratorTest, AlgorithmIterator) 
 {
-    Danils::Vector<int> v = {10, 5, 10, -5};
+    Danils::Vector<int> v = {10, 5, 9, -5, 10};
 
     auto it = std::find(v.cbegin(), v.cend(), 10);
     ASSERT_EQ(*it, 10);
@@ -387,6 +387,9 @@ TEST(IteratorTest, AlgorithmIterator)
     ASSERT_EQ(it_1, v.end());
 
     ASSERT_EQ(std::count(v.begin(), v.end(), 10), 2);
+
+    auto it_2 = ++++v.begin();
+    ASSERT_EQ(it_2 - it, 2);
 }
 
 int main(int argc, char* argv[])
