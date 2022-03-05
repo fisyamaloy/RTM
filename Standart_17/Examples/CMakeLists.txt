@@ -5,4 +5,5 @@ set(SOURCE_FILES
    FoldExpression.hpp
    FileSystem.hpp
    OptionaL.hpp
-   AnY.hpp)
+   AnY.hpp
+   PairsIteratorsAlgorithms.hpp)

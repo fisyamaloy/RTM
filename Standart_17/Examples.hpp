@@ -5,3 +5,4 @@
 #include "Examples/OptionaL.hpp"
 #include "Examples/AnY.hpp"
 #include "Examples/VarianT.hpp"
+#include "Examples/PairsIteratorsAlgorithms.hpp"

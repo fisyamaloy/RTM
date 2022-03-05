@@ -17,10 +17,14 @@ int main()
 
     optional_examples::example_1();
 
-    any_examples::example_1();*/
+    any_examples::example_1();
 
     variant_examples::example_1();
-    variant_examples::example_2();
+    variant_examples::example_2();*/
+
+    pia_examples::example_1();
+    pia_examples::example_2();
+    pia_examples::example_3();
 
     return 0;
 }

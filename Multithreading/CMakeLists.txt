@@ -1,4 +1,4 @@
-set(TARGET Multythreading)
+set(TARGET Multithreading)
 
 set(SOURCE_FILES
    main.cpp
