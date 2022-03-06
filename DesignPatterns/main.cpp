@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Patterns.hpp"
-#include "PimplPattern.hpp"
 
 int main()
 {
