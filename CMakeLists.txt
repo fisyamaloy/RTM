@@ -38,11 +38,12 @@ conan_cmake_run(CONANFILE conanfile.txt
 enable_testing()
 
 add_subdirectory(ADLExample)
+add_subdirectory(Algorithms)
 add_subdirectory(Caching)
 add_subdirectory(CustomKeyForHash)
 add_subdirectory(Danils)
+add_subdirectory(DataStructures)
 add_subdirectory(DesignPatterns)
 add_subdirectory(Multithreading)
 add_subdirectory(SFINAE)
 add_subdirectory(Standart_17)
-add_subdirectory(Algorithms)
